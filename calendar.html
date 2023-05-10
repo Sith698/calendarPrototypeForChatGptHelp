@@ -1,0 +1,309 @@
+<!--
+  @description       : 
+  @author            : Augustin (Abar) BAR
+  @group             : 
+  @last modified on  : 01-17-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+
+
+
+  <div style="height:750px">
+    <!--<lightning-button variant="brand" label="Brand" title="Primary action" onclick={print} class="slds-var-m-left_x-small">
+  </lightning-button>-->
+
+    <div class="slds-page-header header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media">
+            <div class="slds-media__figure">
+              <span class="slds-icon_container slds-icon-standard-event" title="Planning multi-ressource">
+                <lightning-icon icon-name="standard:event" alternative-text="Planning multi-ressource" variant="Close"
+                  size="small"></lightning-icon>
+                <span class="slds-assistive-text">Planning multi-ressource</span>
+              </span>
+            </div>
+            <div class="slds-media__body">
+              <div class="slds-page-header__name">
+                <div class="slds-page-header__name-title">
+                  <h1>
+                    <span class="slds-page-header__title slds-truncate" title="">Planning
+                      ({calendar.periode.length}&nbsp;jours)</span>
+                  </h1>
+                </div>
+              </div>
+
+              <p class="slds-page-header__name-meta"></p>
+              <div class="slds-align_absolute-center">
+                <lightning-radio-group 
+                    name="radioGroup"
+                    options={ressourceTypeOptions}
+                    value={filtreManager.currentRessourceType}
+                    onchange={handleChangeRessourceType}
+                    type="button">
+                </lightning-radio-group>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="slds-page-header__col-actions">
+          <div class="slds-page-header__controls">
+            <div class="slds-page-header__control">
+              <ul class="slds-button-group-list">
+                <li>
+                  <button class="slds-button slds-button_brand" onclick={handleClickResearch}>Rechercher</button>
+                </li>
+                <li>
+                  <button class="slds-button slds-button_neutral" onclick={razFilters}>Réinitialiser</button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <!--</div>-->
+      </div>
+      <div class="slds-card__body slds-card__body_inner ">
+        <div class="slds-page-header__row slds-page-header__row_gutters">
+          <div class="slds-page-header__col-details">
+            <div>
+              <ul class="slds-list_horizontal slds-has-block-links_space">
+                <li class="slds-size_1-of-5">
+                  <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                      <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                          <h2 class="slds-text-title_bold">
+                            <span>Date de début</span>
+                          </h2>
+                        </div>
+                      </header>
+                      
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                      <ul class="slds-list_horizontal slds-has-block-links_space">
+                        <li>
+                          <lightning-combobox name="startDate" label="Jour" value={periodeManager.startDaySelected}
+                            options={periodeManager.optionsStartDay} onchange={handleChangeStartDay}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="startMonth" label="Mois" value={periodeManager.startMonthSelected}
+                            options={periodeManager.optionsMonth} onchange={handleChangeStartmonth}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="startYear" label="Année" value={periodeManager.startYearSelected}
+                            options={periodeManager.optionsYear} onchange={handleChangeStartYear}>
+                          </lightning-combobox>
+                        </li>
+                      </ul>
+                    </div>
+                  </article>
+                </li>
+                <li class="slds-size_1-of-5">
+                  <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                      <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                          <h2 class="slds-text-title_bold">
+                            <span>Date de fin</span>
+                          </h2>
+                        </div>
+                      </header>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                      <ul class="slds-list_horizontal slds-has-block-links_space">
+                        <li>
+                          <lightning-combobox name="endDate" label="Jour" value={periodeManager.endDaySelected}
+                            options={periodeManager.optionsEndDay} onchange={handleChangeEndDay}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="endMonth" label="Mois" value={periodeManager.endMonthSelected}
+                            options={periodeManager.optionsMonth} onchange={handleChangeEndMonth}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="startYear" label="Année" value={periodeManager.endYearSelected}
+                            options={periodeManager.optionsYear} onchange={handleChangeEndYear}>
+                          </lightning-combobox>
+                        </li>
+                      </ul>
+                    </div>
+                  </article>
+                </li>
+                <li class="slds-size_3-of-5">
+                  <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                      <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__body">
+                              <h2 class="slds-text-title_bold">
+                                <span>Filtrer les Ressources :</span> 
+                              </h2>
+                        </div>
+                      </header>
+                    </div>
+
+                    <!-- Filters for Internal Ressources -->
+
+                    <template if:true={isRessHum}>    
+                      <template if:false={isRessExt}>   
+
+                    <div class="slds-card__body slds-card__body_inner">
+                      <ul class="slds-list_horizontal slds-has-block-links_space">
+                        <li>
+                          <lightning-combobox name="endDate" label="Société" value={filtreManager.currentSociete}
+                            options={societeOptions} onchange={handleChangeSociete}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="endMonth" label="Direction" value={filtreManager.currentDirection}
+                            options={directionOptions} onchange={handleChangeDirection}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="startYear" label="Service" value={filtreManager.currentService}
+                            options={serviceOptions} onchange={handleChangeService}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="startYear" label="Etablissement"
+                            value={filtreManager.currentEtablissement} options={etablissementOptions}
+                            onchange={handleChangeEtablissement}>
+                          </lightning-combobox>
+                        </li>
+                        <li>
+                          <lightning-combobox name="endDate" label="Fonction" value={filtreManager.currentFonction}
+                            options={fonctionOptions} onchange={handleChangeFonction}>
+                          </lightning-combobox>
+                        </li>
+                      </ul>
+                    </div>
+
+                    </template>
+
+                    <!-- Filters for External Ressources -->
+
+                    <template if:true={isRessExt}>  
+
+                    <div class="slds-card__body slds-card__body_inner">
+                      <ul class="slds-list_horizontal slds-has-block-links_space">
+                        <li>
+                          <lightning-combobox name="endDate" label="Tiers" value={filtreRessExtManager.currentTiers}
+                            options={clientOptions} onchange={handleChangeTiers}>
+                          </lightning-combobox>
+                        </li>
+                      </ul>
+                    </div>
+
+                    </template>
+
+                    </template>
+
+                    <!-- Filters for Material Ressources -->
+
+                    <template if:false={isRessHum}>   
+
+                      <div class="slds-card__body slds-card__body_inner">
+                        <ul class="slds-list_horizontal slds-has-block-links_space">
+                          <li>
+                            <lightning-combobox name="endDate" label="Société" value={filtreRessMatManager.currentSociete}
+                              options={filtreRessMatManager.societeOptions} onchange={handleChangeSociete}>
+                            </lightning-combobox>
+                          </li>
+                          <li>
+                            <lightning-combobox name="startYear" label="Etablissement"
+                              value={filtreRessMatManager.currentEtablissement} options={filtreRessMatManager.etablissementOptions}
+                              onchange={handleChangeEtablissement}>
+                            </lightning-combobox>
+                          </li>
+                          <li>
+                            <lightning-combobox name="endDate" label="Type" value={filtreRessMatManager.currentMaterialType}
+                              options={filtreRessMatManager.materialTypeOptions} onchange={handleChangeMatType}>
+                            </lightning-combobox>
+                          </li>
+                        </ul>
+                      </div>
+  
+                      </template>
+
+                  </article>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered planningTable">
+      <!--class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols slds-table_col-bordered"-->
+      <thead>
+        <tr class="slds-line-height_reset">
+          <th>
+            <div>
+              Ressources
+            </div>
+          </th>
+          <template for:each={calendar.periode} for:item="day">
+            <th key={day.date} scope="col">
+              <div class="slds-truncate">
+                {day.day}&nbsp;{day.date}/{day.realMonthNumber}
+              </div>
+            </th>
+          </template>
+        </tr>
+      </thead>
+      <tbody>
+        <template for:each={ressourceAff} for:item="res">
+          <tr key={res.ressourceId} class="slds-hint-parent">
+            <th data-label="Ressources Name" scope="row">
+              <lightning-formatted-url value={res.url} tooltip="Cliquez pour accéder à la ressource"
+                label={res.lastName} target="_blank"></lightning-formatted-url>
+            </th>
+            <template for:each={res.calendar.periode} for:item="day">
+              <td class="slds-p-around_none" key={day.day}>
+                <template if:true={day.actif}>
+                  <c-affectations-list height={res.calendar.maxAffectation} reload={reload} date={day.date}
+                    month={day.monthNumber} year={day.year} ressource-id={res.ressourceId}
+                    affectations-list={day.affectations} onaffectationlistdrop={handleAffectationDrop}
+                    onaffectationlistdrag={handleListAffectationDrag} day-actif={day.actif}
+                    ondayclicked={handleDayCliked}>
+                  </c-affectations-list>
+                </template>
+                <template if:false={day.actif}>
+                  <div class="slds-p-around_none slds-m-around_none jourInactif slds-size_1-of-1"
+                    style={res.calendar.maxAffectation}>
+                  </div>
+                </template>
+              </td>
+            </template>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Permet de faire le fond noir lorsqu'on créé une affectation -->
+  <div class="slds-backdrop" data-id="backdrop"></div>
+
+  <!-- Composant de création des affectations -->
+  <!-- Le closeModal est utilisé pour fermer le modal lorsqu'on clique en dehors de la fenêtre. Pour éviter de fermer aussi lorsqu'on clique dans la fenêtre, on utilise stopPropagation sur le slds-modal__content -->
+  <div data-id="lwcAffectation" class="slds-modal" onclick={closeModal}>
+    <div class="slds-modal__container">
+      <div class="slds-modal__header slds-modal__header_empty slds-var-m-around_small">
+        <lightning-icon icon-name="utility:close" alternative-text="Close" size="large" variant="bare-inverse"
+          class="slds-modal__close"></lightning-icon>
+      </div>
+      <div class="slds-modal__content" onclick={stopPropagation}>
+        <c-affectation-creation-l-w-c name="lwcAffectation" onclosingcreationmodal={closeModal}
+          onclosingcreationmodalandgotourl={closeModalAndGoToUrl} record-data={recordData}
+          modal-opening-data={startDateTimeVal}>
+        </c-affectation-creation-l-w-c>
+      </div>
+      <div class="slds-modal__footer" style="display: none;"></div>
+    </div>
+  </div>
+</template>
